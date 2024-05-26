@@ -1,0 +1,6 @@
+TEST_VARIABLE_ADDRESS = 0x08000000;
+
+SECTIONS
+{
+  .test_variable TEST_VARIABLE_ADDRESS : {KEEP(*(.test_variable))}
+}
