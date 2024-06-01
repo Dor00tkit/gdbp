@@ -141,28 +141,109 @@ def extract_segment_selector_details(segment_selector) -> dict:
 
 def parse_eflags(eflags) -> dict:
     """
-    Disable breakpoint
+    Parsing the eflags register
     :param eflags: int: eflags register value
     :return: dict: dict obj contains the bitfields of eflags register
     """
-    flags = {
-        'CF': bool((eflags >> 0) & 0x1),
-        'PF': bool((eflags >> 2) & 0x1),
-        'AF': bool((eflags >> 4) & 0x1),
-        'ZF': bool((eflags >> 6) & 0x1),
-        'SF': bool((eflags >> 7) & 0x1),
-        'TF': bool((eflags >> 8) & 0x1),
-        'IF': bool((eflags >> 9) & 0x1),
-        'DF': bool((eflags >> 10) & 0x1),
-        'OF': bool((eflags >> 11) & 0x1),
-        'IOPL': (eflags >> 12) & 0x3,  # 2 bits, returning the raw numeric value
-        'NT': bool((eflags >> 14) & 0x1),
-        'RF': bool((eflags >> 16) & 0x1),
-        'VM': bool((eflags >> 17) & 0x1),
-        'AC': bool((eflags >> 18) & 0x1),
-        'VIF': bool((eflags >> 19) & 0x1),
-        'VIP': bool((eflags >> 20) & 0x1),
-        'ID': bool((eflags >> 21) & 0x1),
+
+    parsed_eflags = {
+        'CF': bool((eflags >> 0) & 0x1),  # Carry Flag
+        'PF': bool((eflags >> 2) & 0x1),  # Parity Flag
+        'AF': bool((eflags >> 4) & 0x1),  # Auxiliary Carry Flag
+        'ZF': bool((eflags >> 6) & 0x1),  # Zero Flag
+        'SF': bool((eflags >> 7) & 0x1),  # Sign Flag
+        'TF': bool((eflags >> 8) & 0x1),  # Trap Flag
+        'IF': bool((eflags >> 9) & 0x1),  # Interrupt Enable Flag
+        'DF': bool((eflags >> 10) & 0x1),  # Direction Flag
+        'OF': bool((eflags >> 11) & 0x1),  # Overflow Flag
+        'IOPL': (eflags >> 12) & 0x3,  # I/O Privilege Level (2 bits)
+        'NT': bool((eflags >> 14) & 0x1),  # Nested Task Flag
+        'RF': bool((eflags >> 16) & 0x1),  # Resume Flag
+        'VM': bool((eflags >> 17) & 0x1),  # Virtual-8086 Mode Flag
+        'AC': bool((eflags >> 18) & 0x1),  # Alignment Check
+        'VIF': bool((eflags >> 19) & 0x1),  # Virtual Interrupt Flag
+        'VIP': bool((eflags >> 20) & 0x1),  # Virtual Interrupt Pending
+        'ID': bool((eflags >> 21) & 0x1),  # ID Flag
     }
 
-    return flags
+    return parsed_eflags
+
+
+def parse_cr0(cr0) -> dict:
+    """
+    Parsing the CR0 register
+    :param cr0: int: CR0 register value
+    :return: dict: dict object containing the bitfields of the CR0 register
+    """
+
+    parsed_cr0 = {
+        'PE': bool((cr0 >> 0) & 0x1),  # Protection Enable
+        'MP': bool((cr0 >> 1) & 0x1),  # Monitor Coprocessor
+        'EM': bool((cr0 >> 2) & 0x1),  # Emulation
+        'TS': bool((cr0 >> 3) & 0x1),  # Task Switched
+        'ET': bool((cr0 >> 4) & 0x1),  # Extension Type
+        'NE': bool((cr0 >> 5) & 0x1),  # Numeric Error
+        'WP': bool((cr0 >> 16) & 0x1),  # Write Protect
+        'AM': bool((cr0 >> 18) & 0x1),  # Alignment Mask
+        'NW': bool((cr0 >> 29) & 0x1),  # Not Write-through
+        'CD': bool((cr0 >> 30) & 0x1),  # Cache Disable
+        'PG': bool((cr0 >> 31) & 0x1)  # Paging
+    }
+
+    return parsed_cr0
+
+
+def parse_cr4(cr4) -> dict:
+    """
+    Parsing the CR4 register
+    :param cr4: int: CR4 register value
+    :return: dict: dict object containing the bitfields of the CR4 register
+    """
+    parsed_cr4 = {
+        'VME': bool((cr4 >> 0) & 0x1),        # Virtual-8086 Mode Extensions
+        'PVI': bool((cr4 >> 1) & 0x1),        # Protected-Mode Virtual Interrupts
+        'TSD': bool((cr4 >> 2) & 0x1),        # Time Stamp Disable
+        'DE': bool((cr4 >> 3) & 0x1),         # Debugging Extensions
+        'PSE': bool((cr4 >> 4) & 0x1),        # Page Size Extensions
+        'PAE': bool((cr4 >> 5) & 0x1),        # Physical Address Extension
+        'MCE': bool((cr4 >> 6) & 0x1),        # Machine-Check Enable
+        'PGE': bool((cr4 >> 7) & 0x1),        # Page Global Enable
+        'PCE': bool((cr4 >> 8) & 0x1),        # Performance-Monitoring Counter Enable
+        'OSFXSR': bool((cr4 >> 9) & 0x1),     # Operating System Support for SAVE and FXRSTOR instructions
+        'OSXMMEXCPT': bool((cr4 >> 10) & 0x1),  # Operating System Support for Unmasked SIMD Floating-Point Exceptions
+        'UMIP': bool((cr4 >> 11) & 0x1),      # User-Mode Instruction Prevention
+        'LA57': bool((cr4 >> 12) & 0x1),      # 57-bit linear addresses
+        'VMXE': bool((cr4 >> 13) & 0x1),      # VMX-Enable Bit
+        'SMXE': bool((cr4 >> 14) & 0x1),      # SMX-Enable Bit
+        'FSGSBASE': bool((cr4 >> 16) & 0x1),  # FSGSBASE-Enable Bit
+        'PCIDE': bool((cr4 >> 17) & 0x1),     # PCID-Enable Bit
+        'OSXSAVE': bool((cr4 >> 18) & 0x1),   # XSAVE and Processor Extended States-Enable Bit
+        'KL': bool((cr4 >> 19) & 0x1),        # Key-Locker-Enable Bit
+        'SMEP': bool((cr4 >> 20) & 0x1),      # SMEP-Enable Bit
+        'SMAP': bool((cr4 >> 21) & 0x1),      # SMAP-Enable Bit
+        'PKE': bool((cr4 >> 22) & 0x1),       # Protection Key Enable
+        'CET': bool((cr4 >> 23) & 0x1),       # Control-flow Enforcement Technology
+        'PKS': bool((cr4 >> 24) & 0x1),       # Enable protection keys for supervisor-mode pages
+        'UNTR': bool((cr4 >> 25) & 0x1),      # User Interrupts Enable Bit
+    }
+
+    return parsed_cr4
+
+
+def parse_ia32_efer(ia32_efer) -> dict:
+    """
+    Parsing the IA32_EFER register
+    :param ia32_efer: int: IA32_EFER register value
+    :return: dict: dict object containing the bitfields of the IA32_EFER register
+    """
+    parsed_ia32_efer = {
+        'SCE': bool((ia32_efer >> 0) & 0x1),  # SYSCALL Enable
+        # Bits 7:1 are reserved
+        'LME': bool((ia32_efer >> 8) & 0x1),  # IA-32e Mode Enable
+        # Bit 9 is reserved
+        'LMA': bool((ia32_efer >> 10) & 0x1), # IA-32e Mode Active
+        'NXE': bool((ia32_efer >> 11) & 0x1), # Execute Disable Bit Enable
+        # Bits 63:12 are reserved
+    }
+
+    return parsed_ia32_efer
